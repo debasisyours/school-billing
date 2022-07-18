@@ -1,0 +1,35 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net48</TargetFramework>
+    <Nullable>enable</Nullable>
+    <LangVersion>10.0</LangVersion>
+    <EmbeddedResourceUseDependentUponConvention>true</EmbeddedResourceUseDependentUponConvention>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="App.config" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="App.config" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="entityframework" Version="6.4.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SchoolBilling.Common\SchoolBilling.Common.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Security" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+  </ItemGroup>
+
+</Project>
