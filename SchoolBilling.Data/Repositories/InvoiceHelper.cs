@@ -2,6 +2,7 @@
 using SchoolBilling.Data.DataSets;
 using SchoolBilling.Data.Entities;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.OleDb;
 using System.Globalization;
@@ -358,6 +359,67 @@ namespace SchoolBilling.Data.Repositories
             }
 
             return invoice;
+        }
+
+        public TransactionSummaryDataSet PopulateTransactionSummary(List<int> routeList, DateTime fromDate, DateTime toDate)
+        {
+            TransactionSummaryDataSet transactionSummaryDataSet = new TransactionSummaryDataSet();
+            decimal groupTotalCost = 0;
+            int groupTotalDays = 0;
+            string groupTotal = string.Empty;
+            DataRow row;
+            try
+            {
+                foreach (int routeId in routeList)
+                {
+                    string query = $"SELECT I.RouteId, R.Name AS RouteName, I.ClientId, C.Name AS ClientName, I.InvoiceDate, I.RouteCost, I.AidCost, I.Perdiem, I.DayCount, I.TotalCost FROM Invoice I, Client C, Route R WHERE I.RouteId = R.Id AND I.ClientId = C.Id AND I.RouteId = {routeId} AND I.InvoiceDate >=#{fromDate.ToShortDateString()} 12:00:00# AND I.InvoiceDate <=#{toDate.ToShortDateString()} 23:59:59#";
+                    groupTotalCost = 0;
+                    groupTotalDays = 0;
+                    using (var connection = new OleDbConnection(this._connectionString))
+                    {
+                        connection.Open();
+                        using (var command = connection.CreateCommand())
+                        {
+                            command.CommandTimeout = 0;
+                            command.CommandType = CommandType.Text;
+                            command.CommandText = query;
+
+                            using (var reader = command.ExecuteReader(CommandBehavior.Default))
+                            {
+                                while (reader.Read())
+                                {
+                                    row = transactionSummaryDataSet.Tables[TransactionSummaryDataSet.TableSummaryReport].NewRow();
+                                    row[TransactionSummaryDataSet.RouteNameColumn] = Convert.ToString(reader["RouteName"]);
+                                    row[TransactionSummaryDataSet.ClientNameColumn] = Convert.ToString(reader["ClientName"]);
+                                    row[TransactionSummaryDataSet.RouteIdColumn] = Convert.ToInt32(reader["RouteId"]);
+                                    row[TransactionSummaryDataSet.ClientIdColumn] = Convert.ToInt32(reader["ClientId"]);
+                                    row[TransactionSummaryDataSet.InvoiceDateColumn] = Convert.ToDateTime(reader["InvoiceDate"]);
+                                    row[TransactionSummaryDataSet.RouteCostColumn] = Convert.ToDecimal(reader["RouteCost"]);
+                                    row[TransactionSummaryDataSet.AideCostColumn] = Convert.ToDecimal(reader["AidCost"]);
+                                    row[TransactionSummaryDataSet.PerDiemColumn] = Convert.ToDecimal(reader["Perdiem"]);
+                                    row[TransactionSummaryDataSet.DayCountColumn] = Convert.ToInt32(reader["DayCount"]);
+                                    row[TransactionSummaryDataSet.TotalCostColumn] = Convert.ToDecimal(reader["TotalCost"]);
+                                    groupTotalCost += Convert.ToDecimal(reader["TotalCost"]);
+                                    groupTotalDays += Convert.ToInt32(reader["DayCount"]);
+                                    groupTotal = $"Total for {Convert.ToString(reader["RouteName"])}";
+                                    transactionSummaryDataSet.Tables[TransactionSummaryDataSet.TableSummaryReport].Rows.Add(row);
+                                }
+                            }
+                        }
+                    }
+                    row = transactionSummaryDataSet.Tables[TransactionSummaryDataSet.TableSummaryReport].NewRow();
+                    row[TransactionSummaryDataSet.RouteNameColumn] = groupTotal;
+                    row[TransactionSummaryDataSet.DayCountColumn] = groupTotalDays;
+                    row[TransactionSummaryDataSet.TotalCostColumn] = groupTotalCost;
+                    transactionSummaryDataSet.Tables[TransactionSummaryDataSet.TableSummaryReport].Rows.Add(row);
+                }
+            }
+            catch(Exception ex)
+            {
+                Logger.LogException(ex);
+            }
+
+            return transactionSummaryDataSet;
         }
 
         public bool UpdateInvoice(Invoice invoice)

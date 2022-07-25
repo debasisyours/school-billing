@@ -40,6 +40,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -147,6 +148,12 @@
     <Compile Include="Interfaces\RouteInformationForm.Designer.cs">
       <DependentUpon>RouteInformationForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Interfaces\RouteSummaryForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Interfaces\RouteSummaryForm.Designer.cs">
+      <DependentUpon>RouteSummaryForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Interfaces\RouteUpdateForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -187,6 +194,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Interfaces\RouteInformationForm.resx">
       <DependentUpon>RouteInformationForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Interfaces\RouteSummaryForm.resx">
+      <DependentUpon>RouteSummaryForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Interfaces\RouteUpdateForm.resx">
       <DependentUpon>RouteUpdateForm.cs</DependentUpon>

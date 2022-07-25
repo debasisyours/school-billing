@@ -158,6 +158,22 @@ namespace SchoolBilling.Data
             }
         }
 
+        public static List<Route> GetAllRoutes(bool showAll)
+        {
+            using (var routeHelper = new RouteHelper(GetConnectionString()))
+            {
+                return routeHelper.GetAllRoutes(showAll);
+            }
+        }
+
+        public static TransactionSummaryDataSet PopulateTransactionSummary(List<int> routeList, DateTime fromDate, DateTime toDate)
+        {
+            using (var invoiceHelper = new InvoiceHelper(GetConnectionString()))
+            {
+                return invoiceHelper.PopulateTransactionSummary(routeList, fromDate, toDate);
+            }
+        }
+
         public static bool IsPasswordSet()
         {
             using (var companyHelper = new CompanyHelper(GetConnectionString()))

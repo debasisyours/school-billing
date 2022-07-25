@@ -47,6 +47,7 @@
             this.reportsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.routeSummaryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusInfo.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -175,6 +176,8 @@
             // 
             // reportsToolStripMenuItem
             // 
+            this.reportsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.routeSummaryToolStripMenuItem});
             this.reportsToolStripMenuItem.Name = "reportsToolStripMenuItem";
             this.reportsToolStripMenuItem.Size = new System.Drawing.Size(59, 20);
             this.reportsToolStripMenuItem.Text = "&Reports";
@@ -192,6 +195,12 @@
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
             this.aboutToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
             this.aboutToolStripMenuItem.Text = "&About";
+            // 
+            // routeSummaryToolStripMenuItem
+            // 
+            this.routeSummaryToolStripMenuItem.Name = "routeSummaryToolStripMenuItem";
+            this.routeSummaryToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.routeSummaryToolStripMenuItem.Text = "Route Summary";
             // 
             // MenuForm
             // 
@@ -236,6 +245,7 @@
         private System.Windows.Forms.ToolStripDropDownButton toolStripDropDownButton1;
         private System.Windows.Forms.ToolStripMenuItem darkModeToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem lightModeToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem routeSummaryToolStripMenuItem;
     }
 }
 

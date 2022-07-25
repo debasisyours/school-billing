@@ -182,7 +182,7 @@ namespace SchoolBilling.Data.Repositories
 
         #region For MS Access
 
-        public List<Route> GetAllRoutes()
+        public List<Route> GetAllRoutes(bool showAll)
         {
             var routes = new List<Route>();
             string selectQuery = $"SELECT * FROM Route ORDER BY Name";
@@ -200,6 +200,15 @@ namespace SchoolBilling.Data.Repositories
 
                         using (var reader = command.ExecuteReader())
                         {
+                            if (showAll)
+                            {
+                                routes.Add(new Route
+                                {
+                                    Name = "All",
+                                    Id = 0
+                                });
+                            }
+
                             while (reader.Read())
                             {
                                 routes.Add(new Route

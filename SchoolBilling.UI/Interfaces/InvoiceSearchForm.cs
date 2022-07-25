@@ -17,6 +17,8 @@ using Microsoft.Office.Interop;
 using Microsoft.Office.Interop.Outlook;
 using Microsoft.Office.Interop.Excel;
 using LicenseContext = OfficeOpenXml.LicenseContext;
+using Exception = System.Exception;
+using SchoolBilling.Common;
 
 namespace SchoolBilling.UI.Interfaces
 {
@@ -295,45 +297,53 @@ namespace SchoolBilling.UI.Interfaces
             int row = 7;
             decimal totalAmount = 0;
             string filePath = $"InvoiceExport-{DateTime.Now.Year}-{DateTime.Now.Month.ToString().PadLeft(2, '0')}-{DateTime.Now.Day.ToString().PadLeft(2, '0')}-{DateTime.Now.Hour.ToString().PadLeft(2, '0')}-{DateTime.Now.Minute.ToString().PadLeft(2, '0')}-{DateTime.Now.Second.ToString().PadLeft(2, '0')}.xlsx";
-            var sheet = application.Workbook.Worksheets.Add("Invoice Export");
-
-            var companyInfo = DataLayer.GetCompanyDetail();
-            if (companyInfo != null)
+            
+            try
             {
-                this.SetHeaderInfo(sheet, companyInfo);
-            }
+                var sheet = application.Workbook.Worksheets.Add("Invoice Export");
 
-            foreach (DataRow rowItem in this._invoices.Tables[InvoiceDataSet.TableInvoice].Rows)
-            {
-                if (Convert.ToBoolean(rowItem[InvoiceDataSet.SelectedColumn]))
+                var companyInfo = DataLayer.GetCompanyDetail();
+                if (companyInfo != null)
                 {
-                    row += 1;
-                    totalAmount += this.AddSingleRow(rowItem, sheet, row);
+                    this.SetHeaderInfo(sheet, companyInfo);
+                }
+
+                foreach (DataRow rowItem in this._invoices.Tables[InvoiceDataSet.TableInvoice].Rows)
+                {
+                    if (Convert.ToBoolean(rowItem[InvoiceDataSet.SelectedColumn]))
+                    {
+                        row += 1;
+                        totalAmount += this.AddSingleRow(rowItem, sheet, row);
+                    }
+                }
+
+                row += 1;
+                this.AddFooter(sheet, row, totalAmount);
+                sheet.Cells[7, 1, row, 11].Style.WrapText = true;
+
+                for (int startRow = 7; startRow <= row; startRow++)
+                {
+                    for (int startCol = 1; startCol < 12; startCol++)
+                    {
+                        sheet.Cells[startRow, startCol].Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Thin, Color.Black);
+                    }
+                }
+
+                application.SaveAs(Path.Combine(this.txtExportPath.Text, filePath));
+
+                if (showPreview)
+                {
+                    Microsoft.Office.Interop.Excel.Application excelApp = new Microsoft.Office.Interop.Excel.Application();
+                    Workbook workbook = excelApp.Workbooks.Open(Path.Combine(this.txtExportPath.Text, filePath));
+                    excelApp.Visible = true;
+                    ((Worksheet)workbook.ActiveSheet).PageSetup.Orientation = XlPageOrientation.xlLandscape;
+                    ((Worksheet)workbook.ActiveSheet).PageSetup.FitToPagesWide = 1;
+                    workbook.PrintPreview();
                 }
             }
-
-            row += 1;
-            this.AddFooter(sheet, row, totalAmount);
-            sheet.Cells[7, 1, row, 11].Style.WrapText = true;
-
-            for (int startRow = 7; startRow <= row; startRow++)
+            catch(Exception ex)
             {
-                for (int startCol = 1; startCol < 12; startCol++)
-                {
-                    sheet.Cells[startRow, startCol].Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Thin, Color.Black);
-                }
-            }
-
-            application.SaveAs(Path.Combine(this.txtExportPath.Text, filePath));
-
-            if (showPreview)
-            {
-                Microsoft.Office.Interop.Excel.Application excelApp = new Microsoft.Office.Interop.Excel.Application();
-                Workbook workbook = excelApp.Workbooks.Open(Path.Combine(this.txtExportPath.Text, filePath));
-                excelApp.Visible = true;
-                ((Worksheet)workbook.ActiveSheet).PageSetup.Orientation = XlPageOrientation.xlLandscape;
-                ((Worksheet)workbook.ActiveSheet).PageSetup.FitToPagesWide = 1;
-                workbook.PrintPreview();               
+                Logger.LogException(ex);
             }
 
             return filePath;

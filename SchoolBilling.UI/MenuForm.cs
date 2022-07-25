@@ -110,6 +110,7 @@ namespace SchoolBilling.UI
             this.lightModeToolStripMenuItem.Click += new EventHandler(OnThemeSelect);
             this.aboutToolStripMenuItem.Click += new EventHandler(OnAbout);
             this.darkModeToolStripMenuItem.Click += new EventHandler(OnThemeSelect);
+            this.routeSummaryToolStripMenuItem.Click += new EventHandler(OnRouteSummary);
             this.exitToolStripMenuItem.Click += new EventHandler(OnExit);
         }
 
@@ -156,6 +157,13 @@ namespace SchoolBilling.UI
         private void OnRouteInformation(object sender, EventArgs e)
         {
             var routeForm = new RouteInformationForm();
+            routeForm.MdiParent = this;
+            routeForm.Show();
+        }
+
+        private void OnRouteSummary(object sender, EventArgs e)
+        {
+            var routeForm = new RouteSummaryForm();
             routeForm.MdiParent = this;
             routeForm.Show();
         }
